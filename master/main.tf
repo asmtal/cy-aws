@@ -1,8 +1,10 @@
 terraform {
-  backend "s3" {
-    bucket = "cy-terraform"
-    key    = "cy-aws"
-    region = "ap-southeast-2"
+  backend "remote" {
+    organization = "cmbrad"
+
+    workspaces {
+      name = "master"
+    }
   }
 }
 

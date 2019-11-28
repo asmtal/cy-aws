@@ -18,20 +18,20 @@ data "aws_iam_policy_document" "administrators_assume_role_policy" {
 
     principals {
       type        = "AWS"
-      identifiers = ["${data.aws_caller_identity.master.account_id}"]
+      identifiers = [data.aws_caller_identity.master.account_id]
     }
   }
 }
 
 resource "aws_iam_role" "administrators" {
   name               = "administrators"
-  assume_role_policy = "${data.aws_iam_policy_document.administrators_assume_role_policy.json}"
+  assume_role_policy = data.aws_iam_policy_document.administrators_assume_role_policy.json
 
   provider = "aws.account"
 }
 
 resource "aws_iam_role_policy_attachment" "administrators_AdministratorAccess" {
-  role       = "${aws_iam_role.administrators.name}"
+  role       = aws_iam_role.administrators.name
   policy_arn = "arn:aws:iam::aws:policy/AdministratorAccess"
 
   provider = "aws.account"
