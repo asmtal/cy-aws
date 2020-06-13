@@ -1,5 +1,9 @@
+module "public_ip" {
+  source = "../../_modules/public_ip"
+}
+
 module "loki" {
-  source = "../_modules/loki"
+  source = "../../_modules/loki"
 
   vpc_id       = data.terraform_remote_state.master.outputs.sandpit.default_vpc_id
   outbound_ip  = module.public_ip.ip
@@ -9,7 +13,7 @@ module "loki" {
 }
 
 module "grafana" {
-  source = "../_modules/grafana"
+  source = "../../_modules/grafana"
 
   vpc_id       = data.terraform_remote_state.master.outputs.sandpit.default_vpc_id
   outbound_ip  = module.public_ip.ip
@@ -17,7 +21,7 @@ module "grafana" {
 }
 
 module "prometheus" {
-  source = "../_modules/prometheus"
+  source = "../../_modules/prometheus"
 
   vpc_id       = data.terraform_remote_state.master.outputs.sandpit.default_vpc_id
   outbound_ip  = module.public_ip.ip
