@@ -1,0 +1,24 @@
+server:
+  http_listen_port: 9080
+  grpc_listen_port: 0
+
+positions:
+  filename: /tmp/positions.yaml
+
+scrape_configs:
+  - job_name: journal
+    journal:
+      labels:
+        job: systemd-journal
+
+    relabel_configs:
+      - source_labels: ['__journal__systemd_unit']
+        target_label: 'unit'
+      - source_labels: ['__journal_priority']
+        target_label: 'syslog_priority'
+
+    pipeline_stages:
+      - regex:
+          expression: '.*level=(?P<level>[a-zA-Z]+)'
+      - labels:
+          level:

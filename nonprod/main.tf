@@ -9,9 +9,9 @@ terraform {
 data "terraform_remote_state" "master" {
   backend = "s3"
 
-  config {
+  config = {
     bucket = "cy-terraform"
-    key    = "cy-aws"
+    key    = "cy-aws-master"
     region = "ap-southeast-2"
   }
 }
@@ -21,6 +21,6 @@ provider "aws" {
   region  = "ap-southeast-2"
 
   assume_role {
-    role_arn = "arn:aws:iam::${data.terraform_remote_state.master.nonprod_account_id}:role/administrators"
+    role_arn = "arn:aws:iam::${data.terraform_remote_state.master.outputs.nonprod_account_id}:role/administrators"
   }
 }

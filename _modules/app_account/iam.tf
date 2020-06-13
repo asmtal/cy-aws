@@ -6,6 +6,8 @@ provider "aws" {
     role_arn = "arn:aws:iam::${aws_organizations_account.account.id}:role/OrganizationAccountAccessRole"
   }
 
+  region = "ap-southeast-2"
+
   alias = "account"
 }
 
@@ -27,12 +29,12 @@ resource "aws_iam_role" "administrators" {
   name               = "administrators"
   assume_role_policy = data.aws_iam_policy_document.administrators_assume_role_policy.json
 
-  provider = "aws.account"
+  provider = aws.account
 }
 
 resource "aws_iam_role_policy_attachment" "administrators_AdministratorAccess" {
   role       = aws_iam_role.administrators.name
   policy_arn = "arn:aws:iam::aws:policy/AdministratorAccess"
 
-  provider = "aws.account"
+  provider = aws.account
 }
