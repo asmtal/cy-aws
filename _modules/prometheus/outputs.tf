@@ -9,3 +9,11 @@ output "public_ip" {
 output "sg_id" {
   value = aws_security_group.security_group.id
 }
+
+output "hostname" {
+  value = var.hostname
+}
+
+output "address" {
+  value = "http://${var.hostname}:9090/"
+}

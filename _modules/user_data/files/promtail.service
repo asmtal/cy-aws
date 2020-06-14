@@ -5,7 +5,7 @@ After=network.target
 [Service]
 Type=simple
 ExecStart=/opt/promtail/bin/promtail \
-  --client.url=http://127.0.0.1:3100/loki/api/v1/push \
+  --client.url=${PromtailAddress} \
   --client.external-labels=hostname="%H" \
   --config.file=/opt/promtail/promtail-config.yml
 

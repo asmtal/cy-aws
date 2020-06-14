@@ -14,19 +14,36 @@ data "aws_ami" "ubuntu" {
   owners = ["099720109477"] # Canonical
 }
 
+module "user_data" {
+  source = "../user_data"
+
+  scripts = ["${path.module}/files/install_grafana.sh"]
+
+  promtail_address = var.promtail_address
+}
+
 resource "aws_spot_instance_request" "instance" {
   ami           = data.aws_ami.ubuntu.id
-  instance_type = "t3a.small"
   key_name      = var.ssh_key_name
-  user_data     = file("${path.module}/files/install_grafana.sh")
+  instance_type = var.instance_type
+  user_data     = module.user_data.user_data
 
   vpc_security_group_ids = [aws_security_group.security_group.id]
 
-  spot_type            = "one-time"
-  wait_for_fulfillment = true
+  spot_type                       = "persistent"
+  instance_interruption_behaviour = "stop"
+  wait_for_fulfillment            = true
 
   tags = {
-    Name        = "grafana"
+    Name        = var.hostname
     Application = "grafana"
   }
+}
+
+resource "aws_route53_record" "route53_record" {
+  zone_id = var.route53_zone_id
+  name    = var.hostname
+  type    = "CNAME"
+  ttl     = "300"
+  records = [aws_spot_instance_request.instance.public_dns]
 }

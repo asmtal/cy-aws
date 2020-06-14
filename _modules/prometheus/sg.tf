@@ -1,3 +1,7 @@
+data "aws_vpc" "vpc" {
+  id = var.vpc_id
+}
+
 resource "aws_security_group" "security_group" {
   name_prefix = "prometheus-"
   vpc_id      = var.vpc_id
@@ -27,11 +31,11 @@ resource "aws_security_group" "security_group" {
   }
 
   ingress {
-    description     = "Inbound traffic from Grafana"
-    from_port       = 0
-    to_port         = 0
-    protocol        = "-1"
-    security_groups = [var.grafana_sg_id]
+    description = "Inbound traffic from VPC"
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = [data.aws_vpc.vpc.cidr_block]
   }
 
   egress {

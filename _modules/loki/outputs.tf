@@ -9,3 +9,15 @@ output "public_ip" {
 output "sg_id" {
   value = aws_security_group.security_group.id
 }
+
+output "hostname" {
+  value = var.hostname
+}
+
+output "address" {
+  value = "http://${var.hostname}:3100/"
+}
+
+output "promtail_address" {
+  value = "http://${var.hostname}:3100/loki/api/v1/push"  
+}

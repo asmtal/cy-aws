@@ -1,4 +1,4 @@
-data "terraform_remote_state" "master" {
+data "terraform_remote_state" "accounts" {
   backend = "s3"
 
   config = {
