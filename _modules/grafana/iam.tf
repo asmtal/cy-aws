@@ -1,5 +1,5 @@
 resource "aws_iam_policy" "iam_policy" {
-  name        = "prometheus-service-discovery"
+  name        = "grafana-cloudwatch-integration"
 
   policy = <<EOF
 {
@@ -7,26 +7,12 @@ resource "aws_iam_policy" "iam_policy" {
   "Statement": [
     {
       "Effect": "Allow",
-      "Action": "ec2:Describe*",
+      "Action": "cloudwatch:*",
       "Resource": "*"
     },
     {
       "Effect": "Allow",
-      "Action": "elasticloadbalancing:Describe*",
-      "Resource": "*"
-    },
-    {
-      "Effect": "Allow",
-      "Action": [
-        "cloudwatch:ListMetrics",
-        "cloudwatch:GetMetricStatistics",
-        "cloudwatch:Describe*"
-      ],
-      "Resource": "*"
-    },
-    {
-      "Effect": "Allow",
-      "Action": "autoscaling:Describe*",
+      "Action": "logs:*",
       "Resource": "*"
     }
   ]
@@ -40,12 +26,12 @@ resource "aws_iam_role_policy_attachment" "iam_role_policy_attachment" {
 }
 
 resource "aws_iam_instance_profile" "iam_instance_profile" {
-  name_prefix = "prometheus-"
+  name_prefix = "grafana-"
   role        = aws_iam_role.iam_role.name
 }
 
 resource "aws_iam_role" "iam_role" {
-  name_prefix = "prometheus-"
+  name_prefix = "grafana-"
 
   assume_role_policy = <<EOF
 {

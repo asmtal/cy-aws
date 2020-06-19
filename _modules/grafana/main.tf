@@ -33,11 +33,19 @@ resource "aws_spot_instance_request" "instance" {
   spot_type                       = "persistent"
   instance_interruption_behaviour = "stop"
   wait_for_fulfillment            = true
+  iam_instance_profile            = aws_iam_instance_profile.iam_instance_profile.name
 
-  tags = {
-    Name        = var.hostname
-    Application = "grafana"
+  lifecycle {
+    ignore_changes = [tags]
   }
+}
+
+resource "aws_ec2_tag" "ec2_tag" {
+  for_each = {Name = var.hostname, Application = "grafana"}
+
+  resource_id = aws_spot_instance_request.instance.spot_instance_id
+  key         = each.key
+  value       = each.value
 }
 
 resource "aws_route53_record" "route53_record" {

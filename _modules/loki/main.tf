@@ -42,10 +42,17 @@ resource "aws_spot_instance_request" "instance" {
   instance_interruption_behaviour = "stop"
   wait_for_fulfillment            = true
 
-  tags = {
-    Name        = var.hostname
-    Application = "loki"
+  lifecycle {
+    ignore_changes = [tags]
   }
+}
+
+resource "aws_ec2_tag" "ec2_tag" {
+  for_each = {Name = var.hostname, Application = "loki"}
+
+  resource_id = aws_spot_instance_request.instance.spot_instance_id
+  key         = each.key
+  value       = each.value
 }
 
 resource "aws_route53_record" "route53_record" {

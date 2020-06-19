@@ -1,3 +1,5 @@
+.DEFAULT_GOAL := plan
+
 setup:
 	@AWS_ACCOUNT_NAME=$$(echo $(project) | cut -d '/' -f1) && \
 	  cp -r _shared/_all/* $(project)/ && \
