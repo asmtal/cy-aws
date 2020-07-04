@@ -6,7 +6,7 @@ setup:
 	  cp -r _shared/$${AWS_ACCOUNT_NAME}/* $(project)/
 
 clean:
-	@git clean -ffdx
+	@git clean -ffdX
 
 init: setup
 	@cd $(project) && (test -d .terraform || terraform init -backend-config key=$(project)/terraform.tfstate)
