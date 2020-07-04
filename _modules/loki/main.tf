@@ -27,7 +27,7 @@ module "user_data" {
       Content = file("${path.module}/files/loki.service")
     }
   ]
-  scripts = ["${path.module}/files/install_loki.sh"]
+  scripts = [file("${path.module}/files/install_loki.sh")]
 }
 
 resource "aws_spot_instance_request" "instance" {

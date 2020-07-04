@@ -1,0 +1,20 @@
+[Unit]
+Description="HashiCorp Consul - A service mesh solution"
+Documentation=https://www.consul.io/
+Requires=network-online.target
+After=network-online.target
+ConditionFileNotEmpty=/etc/consul.d/consul.hcl
+
+[Service]
+Type=notify
+User=consul
+Group=consul
+ExecStart=/opt/consul/bin/consul agent -config-dir=/etc/consul.d/ -retry-join "provider=aws tag_key=ConsulClusterId tag_value=${ConsulClusterId}"
+ExecReload=/opt/consul/bin/consul reload
+ExecStop=/opt/consul/bin/consul leave
+KillMode=process
+Restart=on-failure
+LimitNOFILE=65536
+
+[Install]
+WantedBy=multi-user.target

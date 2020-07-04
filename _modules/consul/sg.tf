@@ -15,17 +15,17 @@ resource "aws_security_group" "security_group" {
   }
 
   ingress {
-    description = "Promtail Web interface from specific IP"
-    from_port   = 9080
-    to_port     = 9080
+    description = "Consul Web interface from specific IP"
+    from_port   = 8500
+    to_port     = 8500
     protocol    = "tcp"
     cidr_blocks = ["${var.outbound_ip}/32"]
   }
 
   ingress {
-    description = "Prometheus Web interface from specific IP"
-    from_port   = 9090
-    to_port     = 9090
+    description = "Promtail Web interface from specific IP"
+    from_port   = 9080
+    to_port     = 9080
     protocol    = "tcp"
     cidr_blocks = ["${var.outbound_ip}/32"]
   }
@@ -54,7 +54,7 @@ resource "aws_security_group" "security_group" {
   }
 
   tags = {
-    Name        = "prometheus"
-    Application = "prometheus"
+    Name        = "consul"
+    Application = "consul"
   }
 }

@@ -14,20 +14,22 @@ data "aws_ami" "ubuntu" {
   owners = ["099720109477"] # Canonical
 }
 
+resource "random_uuid" "uuid" {}
+
 module "user_data" {
   source = "../user_data"
 
   files = [
     {
-      Path    = "/opt/prometheus/prometheus-config.yml"
-      Content = file("${path.module}/files/prometheus-config.yml")
+      Path    = "/etc/systemd/system/consul.service"
+      Content = templatefile("${path.module}/files/consul.service", {ConsulTagKey = var.consul_tag_key, ConsulTagValue = random_uuid.uuid.result})
     },
     {
-      Path    = "/etc/systemd/system/prometheus.service"
-      Content = file("${path.module}/files/prometheus.service")
+      Path    = "/etc/consul.d/consul.hcl"
+      Content = file("${path.module}/files/consul.hcl")
     }
   ]
-  scripts = [file("${path.module}/files/install_prometheus.sh")]
+  scripts = [file("${path.module}/files/install_consul.sh")]
 
   promtail_address = var.promtail_address
 }
@@ -51,7 +53,7 @@ resource "aws_spot_instance_request" "instance" {
 }
 
 resource "aws_ec2_tag" "ec2_tag" {
-  for_each = {Name = var.hostname, Application = "prometheus"}
+  for_each = {Name = var.hostname, Application = "consul", (var.consul_tag_key) = random_uuid.uuid.result}
 
   resource_id = aws_spot_instance_request.instance.spot_instance_id
   key         = each.key

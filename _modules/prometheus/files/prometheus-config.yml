@@ -1,19 +1,19 @@
 global:
-  scrape_interval:     15s # By default, scrape targets every 15 seconds.
+  scrape_interval: 15s # By default, scrape targets every 15 seconds.
 
 scrape_configs:
-  - job_name: 'prometheus'
+  - job_name: prometheus
 
     static_configs:
       - targets: ['localhost:9090', 'localhost:9100']
 
-  - job_name: 'ec2'
+  - job_name: ec2
     ec2_sd_configs:
       - region: ap-southeast-2
         port: 9100
 
     relabel_configs:
-      - source_labels: [__meta_ec2_tag_Name, __meta_ec2_availability_zone]
+      - source_labels: [__meta_ec2_tag_Name]
         target_label: instance
 
       - source_labels: [__meta_ec2_instance_id]
@@ -21,3 +21,72 @@ scrape_configs:
       
       - source_labels: [__meta_ec2_instance_type]
         target_label: instance_type
+
+      - source_labels: [__meta_ec2_tag_Application]
+        target_label: application
+
+      - source_labels: [__meta_ec2_availability_zone]
+        target_label: availability_zone
+
+      - source_labels: [__meta_ec2_owner_id]
+        target_label: aws_account_id
+
+  - job_name: consul
+    metrics_path: /v1/agent/metrics
+    params:
+      format: [prometheus]
+    ec2_sd_configs:
+      - region: ap-southeast-2
+        port: 8500
+        filters:
+          - name: "tag:Application"
+            values: [consul]
+
+    relabel_configs:
+      - source_labels: [__meta_ec2_tag_Name]
+        target_label: instance
+
+      - source_labels: [__meta_ec2_instance_id]
+        target_label: instance_id
+      
+      - source_labels: [__meta_ec2_instance_type]
+        target_label: instance_type
+
+      - source_labels: [__meta_ec2_tag_Application]
+        target_label: application
+
+      - source_labels: [__meta_ec2_availability_zone]
+        target_label: availability_zone
+
+      - source_labels: [__meta_ec2_owner_id]
+        target_label: aws_account_id
+
+  - job_name: vault
+    metrics_path: /v1/sys/metrics
+    params:
+      format: [prometheus]
+    ec2_sd_configs:
+      - region: ap-southeast-2
+        port: 8200
+        filters:
+          - name: "tag:Application"
+            values: [vault]
+
+    relabel_configs:
+      - source_labels: [__meta_ec2_tag_Name]
+        target_label: instance
+
+      - source_labels: [__meta_ec2_instance_id]
+        target_label: instance_id
+      
+      - source_labels: [__meta_ec2_instance_type]
+        target_label: instance_type
+
+      - source_labels: [__meta_ec2_tag_Application]
+        target_label: application
+
+      - source_labels: [__meta_ec2_availability_zone]
+        target_label: availability_zone
+
+      - source_labels: [__meta_ec2_owner_id]
+        target_label: aws_account_id

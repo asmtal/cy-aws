@@ -33,7 +33,7 @@ locals {
       Content = file("${path.module}/files/node_exporter.service")
     }
   ]
-  default_scripts = ["${path.module}/files/install_node_exporter.sh", "${path.module}/files/install_promtail.sh"]
+  default_scripts = [file("${path.module}/files/install_node_exporter.sh"), file("${path.module}/files/install_promtail.sh")]
 
   files = [{
     content_type = "text/cloud-config"
@@ -41,7 +41,7 @@ locals {
       Files = [for f in concat(local.default_files, var.files): {Path = f.Path, Content = base64encode(f.Content)}]
     })
   }]
-  scripts = [for s in concat(local.default_scripts, var.scripts): {content_type = "text/x-shellscript", content = file(s)}]
+  scripts = [for s in concat(local.default_scripts, var.scripts): {content_type = "text/x-shellscript", content = s}]
 
   parts = concat(local.files, local.scripts)
 }

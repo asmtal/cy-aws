@@ -19,15 +19,23 @@ module "user_data" {
 
   files = [
     {
-      Path    = "/opt/prometheus/prometheus-config.yml"
-      Content = file("${path.module}/files/prometheus-config.yml")
+      Path    = "/etc/systemd/system/vault.service"
+      Content = file("${path.module}/files/vault.service")
     },
     {
-      Path    = "/etc/systemd/system/prometheus.service"
-      Content = file("${path.module}/files/prometheus.service")
+      Path    = "/etc/vault.d/vault.hcl"
+      Content = file("${path.module}/files/vault.hcl")
+    },
+    {
+      Path    = "/etc/systemd/system/consul.service"
+      Content = templatefile("${path.module}/files/consul.service", {ConsulClusterId = var.consul_cluster_id})
+    },
+    {
+      Path    = "/etc/consul.d/consul.hcl"
+      Content = file("${path.module}/files/consul.hcl")
     }
   ]
-  scripts = [file("${path.module}/files/install_prometheus.sh")]
+  scripts = [file("${path.module}/files/install_consul.sh"), file("${path.module}/files/install_vault.sh")]
 
   promtail_address = var.promtail_address
 }
@@ -51,7 +59,7 @@ resource "aws_spot_instance_request" "instance" {
 }
 
 resource "aws_ec2_tag" "ec2_tag" {
-  for_each = {Name = var.hostname, Application = "prometheus"}
+  for_each = {Name = var.hostname, Application = "vault", ConsulClusterId = var.consul_cluster_id}
 
   resource_id = aws_spot_instance_request.instance.spot_instance_id
   key         = each.key

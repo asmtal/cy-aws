@@ -17,7 +17,7 @@ data "aws_ami" "ubuntu" {
 module "user_data" {
   source = "../user_data"
 
-  scripts = ["${path.module}/files/install_grafana.sh"]
+  scripts = [templatefile("${path.module}/files/install_efs.sh", {EfsFilesystemId = aws_efs_file_system.efs_file_system.id}), file("${path.module}/files/install_grafana.sh")]
 
   promtail_address = var.promtail_address
 }

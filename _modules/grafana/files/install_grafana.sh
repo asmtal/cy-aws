@@ -12,6 +12,10 @@ add-apt-repository "deb https://packages.grafana.com/oss/deb stable main"
 apt-get update
 apt-get install -y grafana
 
+# fix permissions
+chown grafana:grafana /var/lib/grafana
+chmod 755
+
 # update os
 apt-get upgrade -y
 

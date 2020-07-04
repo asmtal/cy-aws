@@ -20,6 +20,9 @@ plan: init
 apply: init
 	@cd $(project) && terraform apply plan.out
 
+applya: init
+	@cd $(project) && terraform apply -var project=$(project) -auto-approve
+
 terraform:
 	@cd $(project) && terraform $(cmd)
 

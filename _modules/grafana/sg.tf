@@ -23,6 +23,14 @@ resource "aws_security_group" "security_group" {
   }
 
   ingress {
+    description = "Promtail Web interface from specific IP"
+    from_port   = 9080
+    to_port     = 9080
+    protocol    = "tcp"
+    cidr_blocks = ["${var.outbound_ip}/32"]
+  }
+
+  ingress {
     description = "SSH from specific IP"
     from_port   = 22
     to_port     = 22
