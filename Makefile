@@ -15,10 +15,10 @@ initf: guard-project setup
 	@cd $(project) && terraform init -backend-config key=$(project)/terraform.tfstate
 
 plan: guard-project init
-	@cd $(project) && terraform plan -var project=$(project) -out plan.out
+	@echo "Planning $(project)" && cd $(project) && terraform plan -var project=$(project) -out plan.out
 
 pland: guard-project init
-	@cd $(project) && terraform plan -var project=$(project) -out plan.out -destroy
+	@echo "Planning destroy of $(project)" && cd $(project) && terraform plan -var project=$(project) -out plan.out -destroy
 
 plana: guard-environment
 	@find $(environment)/ -type f -name "*.tf" -exec dirname {} \; | uniq | xargs -L1 -I{} make project={} plan
