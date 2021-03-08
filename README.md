@@ -1,71 +1,40 @@
-# AWS Accounts
+# CY-AWS
 
-This repository contains Terraform code which describes my personal AWS accounts.
+This repository contains all terraform definitions required to provision the infrastructure and applications in my AWS accounts.
 
-The master account contains all IAM users, and from there roles can be assumed to access
-sandpit / nonprod / prod accounts. All accounts are created in an organisation in
-the master account.
+## Usage
 
-## TODO
-
-Setup Atlantis or similar to run against git commits.
-
-## Actions
-### Init
+### Plan
 
 ```bash
-# called implicitly by plan
-make project=sandpit/monitoring init
-
-# force a new init if modules have changed
-make project=sandpit/monitoring initf
+# format: make project=environment/application plan
+make project=sandpit/consul plan
 ```
 
-### Plan & Apply
+### Apply
 
 ```bash
-# plan and write plan to file
-make project=sandpit/monitoring plan
-
-# apply plan created earlier
-make project=sandpit/monitoring apply
+# format: make project=environment/application apply
+make project=sandpit/consul apply
 ```
 
-### Ad hoc commands
+## Applications
 
-```bash
-# command without common variables set
-make project=master/accounts terraform cmd="state list"
+### Start Order
 
-# command with common variables set
-make project=master/accounts terraformv cmd="state list"
-```
+* DNS
+* Consul
+* Vault
+* Monitoring
+* Nomad
 
-### Clean
+### Monitoring
 
-```bash
-# clean everything not stored in git
-make clean
-```
+* Grafana
+* Prometheus
+* Loki
 
-## Workflow
-### Add new resources
+### Support
 
-If they belong to a new application then make a new directory under the appropriate account.
-
-If they belong to an existing application then modify/create new `*.tf` files in the appropriate directory.
-
-Any sub directories will be allocated a separate Terraform state and must be planned separately.
-
-
-### Delete resources
-
-1. Delete code
-2. `plan` then `apply`
-3. Commit and push
-
-### Restore deleted resources
-
-1. git revert commit where resources where deleted
-2. `plan` then `apply`
-3. Commit and push
+* Hashicorp Vault
+* Hashicorp Consul

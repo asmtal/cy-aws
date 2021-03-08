@@ -1,0 +1,14 @@
+[Unit]
+Description=Nomad
+Requires=network-online.target
+After=network-online.target
+
+[Service]
+Restart=on-failure
+ExecStartPre=bash -c '/usr/bin/sed -i "s|{{ advertise_http }}|$(/usr/bin/curl -Ssq http://169.254.169.254/latest/meta-data/public-ipv4)|g" /opt/nomad/config/client.hcl'
+ExecStart=/usr/bin/nomad agent -config="/opt/nomad/config"
+ExecReload=/bin/kill -HUP $MAINPID
+KillSignal=SIGTERM
+
+[Install]
+WantedBy=multi-user.target

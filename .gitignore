@@ -1,5 +1,7 @@
 .terraform
-terraform.tfstate*
 _*.tf
 !_shared/**/_*.tf
 *.out
+*.tfstate*
+env
+.vscode
